@@ -17,7 +17,4 @@ public class FristScreenActivity extends AppCompatActivity {
         startActivity(new Intent(this, AddHeaderActivity.class));
     }
 
-    public void pullRefresh(View view) {
-        startActivity(new Intent(this,RefreshActivity.class));
-    }
 }
