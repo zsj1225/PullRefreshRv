@@ -17,4 +17,7 @@ public class FristScreenActivity extends AppCompatActivity {
         startActivity(new Intent(this, AddHeaderActivity.class));
     }
 
+    public void emptyLayout(View view) {
+        startActivity(new Intent(this,EmptyLayoutActivity.class));
+    }
 }

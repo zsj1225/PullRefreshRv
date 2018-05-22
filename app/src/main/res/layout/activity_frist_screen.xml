@@ -12,7 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="headerView"
-        android:text="下拉刷新"
+        android:text="RecyclerView下拉"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="任意界面下拉"
+        app:layout_constraintTop_toBottomOf="@id/header_view"
+        android:onClick="emptyLayout"
+        />
 
 </android.support.constraint.ConstraintLayout>
