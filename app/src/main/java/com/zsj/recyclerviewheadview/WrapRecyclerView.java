@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -19,6 +20,7 @@ import java.util.ArrayList;
  * 头布局的RecyclerView
  */
 public class WrapRecyclerView extends RecyclerView {
+    private static final String TAG = "TAG";
     // 下拉刷新的辅助类
     private RefreshViewCreator mRefreshCreator;
     // 下拉刷新头部的高度
@@ -28,7 +30,7 @@ public class WrapRecyclerView extends RecyclerView {
     // 手指按下的Y位置
     private int mFingerDownY;
     // 手指拖拽的阻力指数
-    private float mDragIndex = 0.35f;
+    private float mDragIndex = 0.5f;
     // 当前是否正在拖动
     private boolean mCurrentDrag = false;
     // 当前的状态
@@ -100,18 +102,21 @@ public class WrapRecyclerView extends RecyclerView {
         switch (e.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 // 如果是在最顶部才处理，否则不需要处理
-                if (canTopScrollUp() || mCurrentRefreshStatus == REFRESH_STATUS_REFRESHING) {
+                Log.d(TAG, "onTouchEvent: canTopScrollUp ="+canTopScrollUp() +", mCurrentRefreshStatus ="+mCurrentRefreshStatus);
+                if (canTopScrollUp() /*|| mCurrentRefreshStatus == REFRESH_STATUS_REFRESHING*/) {
                     // 如果没有到达最顶端，也就是说还可以向上滚动就什么都不处理
                     return super.onTouchEvent(e);
                 }
 
                 // 解决下拉刷新自动滚动问题
+                Log.d(TAG, "onTouchEvent: mCurrentDrag ="+mCurrentDrag);
                 if (mCurrentDrag) {
                     scrollToPosition(0);
                 }
 
                 // 获取手指触摸拖拽的距离
                 int distanceY = (int) ((e.getRawY() - mFingerDownY) * mDragIndex);
+                Log.d(TAG, "onTouchEvent: distanceY =" +distanceY +", mFingerDownY ="+mFingerDownY +"getRawY ="+e.getRawY());
                 // 如果是已经到达头部，并且不断的向下拉，那么不断的改变refreshView的marginTop的值
                 if (distanceY > 0) {
                     int marginTop = distanceY - mRefreshViewHeight;
@@ -167,6 +172,7 @@ public class WrapRecyclerView extends RecyclerView {
     public void restorePullRefreshView() {
         int currentTopMargin = ((MarginLayoutParams) mRefreshView.getLayoutParams()).topMargin;
         int finalTopMargin = -mRefreshViewHeight + 1;
+        Log.d("zsj", "restorePullRefreshView: currentTopMargin ="+currentTopMargin+" ,finalTopMargin ="+finalTopMargin);
         if (mCurrentRefreshStatus == REFRESH_STATUS_LOOSEN_REFRESHING) {
             finalTopMargin = 0;
             mCurrentRefreshStatus = REFRESH_STATUS_REFRESHING;
@@ -220,8 +226,11 @@ public class WrapRecyclerView extends RecyclerView {
      */
     public void setPullRefreshViewMarginTop(int marginTop) {
         MarginLayoutParams params = (MarginLayoutParams) mRefreshView.getLayoutParams();
+        //如果头布局底部了.就不能再继续往下拉了
         if (marginTop < -mRefreshViewHeight + 1) {
             marginTop = -mRefreshViewHeight + 1;
+        }else if (marginTop >=0){
+            marginTop = 0;
         }
         params.topMargin = marginTop;
         mRefreshView.setLayoutParams(params);

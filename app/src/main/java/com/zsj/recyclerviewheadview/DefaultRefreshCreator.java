@@ -16,7 +16,7 @@ import android.view.ViewGroup;
  * 更新描述   TODO
  */
 public class DefaultRefreshCreator extends RefreshViewCreator {
-    private static final String TAG = "TAG";
+    private static final String TAG = "DefaultRefreshCreator";
     // 加载数据的ImageView
     private View mRefreshIv;
 
@@ -29,11 +29,19 @@ public class DefaultRefreshCreator extends RefreshViewCreator {
 
     @Override
     public void onPull(int currentDragHeight, int refreshViewHeight, int currentRefreshStatus) {
-        float rotate =1.0f  + ((float) currentDragHeight) / refreshViewHeight;
-        Log.d(TAG, "onPull rotate ="+rotate);
-        // 不断下拉的过程中不断的旋转图片
-//        mRefreshIv.setRotation(rotate * 360);
-        mRefreshIv.setAlpha(rotate);
+//        Log.d(TAG, "onPull: currentDragHeight =" + currentDragHeight + " , refreshViewHeight =" + refreshViewHeight);
+        float rotate = 1.0f + ((float) currentDragHeight) / refreshViewHeight;
+//        Log.d(TAG, "onPull rotate =" + rotate);
+        if (rotate >= 0.6f) {
+            // 不断下拉的过程中不断的旋转图片
+            float alpha = (refreshViewHeight +currentDragHeight- (refreshViewHeight*0.4f) )/ (refreshViewHeight*0.6f);
+//            Log.d(TAG, "onPull: left ="+(refreshViewHeight +currentDragHeight- (refreshViewHeight*0.4f)));
+//            Log.d(TAG, "onPull: right ="+((refreshViewHeight*0.6f)));
+//            Log.d(TAG, "onPull: alpha ="+alpha);
+            mRefreshIv.setAlpha(alpha);
+        }else {
+            mRefreshIv.setAlpha(0.0f);
+        }
     }
 
     @Override
